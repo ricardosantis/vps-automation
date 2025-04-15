@@ -56,14 +56,14 @@ Este repositório contém um conjunto completo de scripts shell para automatizar
 As credenciais são mantidas fora do versionamento, em arquivos `.env` como:
 
 /root/scripts/envs/.env_portainer
-DOMINIO=portainer.seudominio.com
-USUARIO=admin
-SENHA=suasenha
+DOMINIO=portainer.seudominio.com\n
+USUARIO=admin\n
+SENHA=suasenha\n
 
 /root/scripts/envs/.env_github
-GITHUB_USUARIO=seunome
-GITHUB_TOKEN=seutoken
-REPO_NOME=portainer-stacks-backup
+GITHUB_USUARIO=seunome\n
+GITHUB_TOKEN=seutoken\n
+REPO_NOME=portainer-stacks-backup\n
 
 ---
 
