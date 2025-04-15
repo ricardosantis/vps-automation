@@ -55,13 +55,12 @@ Este repositório contém um conjunto completo de scripts shell para automatizar
 
 As credenciais são mantidas fora do versionamento, em arquivos `.env` como:
 
-**/root/scripts/envs/.env_portainer
+/root/scripts/envs/.env_portainer
 DOMINIO=portainer.seudominio.com
 USUARIO=admin
 SENHA=suasenha
 
-
-**/root/scripts/envs/.env_github
+/root/scripts/envs/.env_github
 GITHUB_USUARIO=seunome
 GITHUB_TOKEN=seutoken
 REPO_NOME=portainer-stacks-backup
@@ -84,7 +83,9 @@ Limpar backups antigos:
 ## 📅 Cron (exemplo configurado)
 
 0 2 * * * /root/scripts/scripts/backup_stacks_portainer.sh >> /root/scripts/logs/backup_stacks_portainer.log 2>&1
+
 30 2 * * * /root/scripts/scripts/enviar_backups_github.sh >> /root/scripts/logs/enviar_backups_github.log 2>&1
+
 0 1 * * * /root/scripts/scripts/limpar_backups_antigos.sh >> /root/scripts/logs/limpar_backups_antigos.log 2>&1
 
 ---
