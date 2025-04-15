@@ -1,104 +1,57 @@
-# VPS Automation – Scripts de Automação para VPS com Docker Swarm
+# VPS Automation – Scripts de Backup e Manutenção com Docker + Portainer
 
-Este repositório contém um conjunto completo de scripts shell para automatizar tarefas comuns em VPSs com Docker Swarm e Portainer, incluindo backup, limpeza de arquivos órfãos e envio para o GitHub.
+Este repositório contém um conjunto de scripts Shell para automatizar tarefas de manutenção, backup das stacks do Portainer, limpeza de containers Docker e envio dos backups para o GitHub. Tudo centralizado numa estrutura organizada de pastas para facilitar o gerenciamento da sua VPS.
 
----
-
-## 📁 Estrutura de Pastas
+## Estrutura de Pastas
 
 /root/scripts
-├── backups/
-│   └── portainer_stacks/     → Backups das stacks do Portainer (.yaml)
-│
-├── envs/
-│   ├── .env_portainer        → Variáveis com credenciais do Portainer
-│   └── .env_github           → Token e config do repositório GitHub
-│
-├── logs/
-│   ├── backup_stacks_portainer.log
-│   ├── enviar_backups_github.log
-│   ├── limpeza_docker.log
-│   ├── limpeza_overlay2.log
-│   ├── limpar_backups_antigos.log
-│   └── redis-restart.log
-│
-└── scripts/
-    ├── backup_stacks_portainer.sh
-    ├── enviar_backups_github.sh
-    ├── limpar_backups_antigos.sh
-    ├── limpeza_docker.sh
-    ├── forcar_limpeza_overlay2_real.sh
-    └── reiniciar-redis.sh
+├── backups/               # Armazena os backups, exemplo: portainer_stacks/
+├── envs/                  # Contém os arquivos .env com credenciais
+├── logs/                  # Logs dos scripts executados via cron
+├── scripts/               # Todos os scripts .sh ficam aqui
+├── README.md              # Este arquivo de documentação
 
----
+## Scripts Disponíveis
 
-## 🔧 Funcionalidades
+backup_stacks_portainer.sh      – Faz backup das stacks do Portainer via API e salva como .yaml
+enviar_backups_github.sh        – Envia os backups para repositório privado no GitHub
+limpar_backups_antigos.sh       – Compacta arquivos .yaml com +3 dias e remove .gz com +14 dias
+reiniciar-redis.sh              – Reinicia o container do Redis (usado como cache)
+limpeza_docker.sh               – Remove volumes, imagens e networks não utilizados
+forcar_limpeza_overlay2_real.sh – ⚠️ (DESATIVADO) Remove diretórios órfãos do overlay2
 
-- Backup automático das stacks via API do Portainer
-- Envio seguro dos arquivos para repositório privado GitHub
-- Limpeza e compactação de backups antigos
-- Reinício agendado de serviços como Redis
-- Limpeza periódica do Docker e diretórios overlay2
-- Estrutura pronta para cron + logrotate
+## Arquivos .env
 
----
+Esses arquivos ficam em /root/scripts/envs/
 
-## ✅ Requisitos
+.env_portainer
+Dominio do portainer: portainer.seudominio.com.br
+Usuario: seu_usuario
+Senha: sua_senha
 
-- VPS com Docker e Docker Swarm configurados
-- Portainer com agente e autenticação via API
-- Dependências: `curl`, `jq`, `git`, `gzip`, `logrotate`
+.env_github
+GITHUB_USUARIO="seu_usuario"
+GITHUB_TOKEN="ghp_xxxxxxxxxxxxxxxxx"
+REPO_NOME="portainer-stacks-backup"
 
----
+## Agendamentos no Crontab (use crontab -e)
 
-## 🔐 Segurança
-
-As credenciais são mantidas fora do versionamento, em arquivos `.env` como:
-
-/root/scripts/envs/.env_portainer
-DOMINIO=portainer.seudominio.com\n
-USUARIO=admin\n
-SENHA=suasenha\n
-
-/root/scripts/envs/.env_github
-GITHUB_USUARIO=seunome\n
-GITHUB_TOKEN=seutoken\n
-REPO_NOME=portainer-stacks-backup\n
-
----
-
-## 🖥️ Execução manual
-
-Fazer backup:
-/root/scripts/scripts/backup_stacks_portainer.sh
-
-Enviar para GitHub:
-/root/scripts/scripts/enviar_backups_github.sh
-
-Limpar backups antigos:
-/root/scripts/scripts/limpar_backups_antigos.sh
-
----
-
-## 📅 Cron (exemplo configurado)
-
+0 4 * * * /root/scripts/scripts/reiniciar-redis.sh >> /root/scripts/logs/redis-restart.log 2>&1
+0 3 * * 0 /root/scripts/scripts/limpeza_docker.sh >> /root/scripts/logs/limpeza_docker.log 2>&1
 0 2 * * * /root/scripts/scripts/backup_stacks_portainer.sh >> /root/scripts/logs/backup_stacks_portainer.log 2>&1
-
 30 2 * * * /root/scripts/scripts/enviar_backups_github.sh >> /root/scripts/logs/enviar_backups_github.log 2>&1
-
 0 1 * * * /root/scripts/scripts/limpar_backups_antigos.sh >> /root/scripts/logs/limpar_backups_antigos.log 2>&1
 
----
+## Cuidados
 
-## 📌 Observações
+- Nunca edite as stacks direto no GitHub. Ele serve apenas como backup.
+- O script forcar_limpeza_overlay2_real.sh está desabilitado por segurança, pois pode apagar dados em uso.
+- Para restaurar manualmente, basta importar o .yaml pelo painel do Portainer.
 
-O script forcar_limpeza_overlay2_real.sh deve ser executado apenas manualmente, pois pode causar falhas em containers se rodado em momentos críticos.
+## Repositório
 
-Não é recomendada a modificação manual dos arquivos .yaml no repositório GitHub. Eles são apenas cópias de segurança.
+https://github.com/ricardosantis/vps-automation
 
----
+## Contribuições
 
-## 🤝 Contribuição
-
-Este repositório foi criado para ajudar outros usuários que utilizam o mesmo instalador Docker com Portainer e enfrentam os mesmos desafios. Fique à vontade para sugerir melhorias ou adaptar à sua realidade.
-
+Sugestões e melhorias são bem-vindas!
