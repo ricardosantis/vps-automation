@@ -1,0 +1,28 @@
+# Ignora arquivos de variáveis sensíveis
+*.env
+.env*
+envs/
+scripts/envs/
+
+# Ignora arquivos de log
+*.log
+logs/
+scripts/logs/
+
+# Ignora backups gerados
+backups/
+scripts/backups/
+backups_stacks_portainer/
+
+# Ignora arquivos temporários de envio ao GitHub
+/tmp/backup_portainer_*/
+
+# Ignora arquivos de sistema
+.DS_Store
+*.swp
+*.swo
+*.bak
+
+# Ignora pastas de cache (caso algum editor crie)
+__pycache__/
+*.pyc
